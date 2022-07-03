@@ -1,25 +1,53 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useRef } from "react";
+import { LocomotiveScrollProvider } from "react-locomotive-scroll";
+import "locomotive-scroll/dist/locomotive-scroll.css";
+import Loader from "./Components/Loader";
+import Home from "./sections/Home";
+import About from "./sections/About";
+import Shop from "./sections/Shop";
+import { AnimatePresence, motion } from "framer-motion";
+import ScrollTriggerProxy from "./Components/ScrollTriggerProxy";
+import Banner from "./sections/Banner";
+import NewArrival from "./sections/NewArrival";
 
-function App() {
+const App = () => {
+  const containerRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <AnimatePresence>
+      {isLoading ? (
+        <motion.div key="loader">
+          <Loader setIsLoading={setIsLoading} />
+        </motion.div>
+      ) : (
+        <LocomotiveScrollProvider
+          options={{
+            smooth: true,
+            lerp: 1,
+          }}
+          watch={
+            [
+              //..all the dependencies you want to watch to update the scroll.
+              //  Basicaly, you would want to watch page/location changes
+              //  For exemple, on Next.js you would want to watch properties like `router.asPath` (you may want to add more criterias if the instance should be update on locations with query parameters)
+            ]
+          }
+          containerRef={containerRef}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <ScrollTriggerProxy />
+          <main className="App" data-scroll-container ref={containerRef}>
+            <Home />
+            <About />
+            <Shop />
+            <Banner />
+            <NewArrival />
+          </main>
+        </LocomotiveScrollProvider>
+      )}
+    </AnimatePresence>
   );
-}
+};
 
 export default App;
+
+//TODO: 38.12
